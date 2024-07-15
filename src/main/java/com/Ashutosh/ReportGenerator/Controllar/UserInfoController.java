@@ -4,6 +4,7 @@ package com.Ashutosh.ReportGenerator.Controllar;
 import com.Ashutosh.ReportGenerator.DTO.UserInfoDTO;
 import com.Ashutosh.ReportGenerator.Service.ServiceImpl.UserInfoServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
@@ -39,10 +40,16 @@ public class UserInfoController {
         return ResponseEntity.ok(userInfoDTO);
     }
 
+//    @GetMapping("/get-alluser")
+//    @PreAuthorize("hasAuthority('ROLE_USER')")
+//    public ResponseEntity<List<UserInfoDTO>> getalluser(@RequestParam(defaultValue = "1")Integer page){
+//        return new ResponseEntity<List<UserInfoDTO>> (userInfoService.getallusers(page),HttpStatus.OK);
+//    }
+
     @GetMapping("/get-alluser")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public List<UserInfoDTO> getalluser(){
-        return userInfoService.getallusers();
+    public ResponseEntity<List<UserInfoDTO>> getAllUser() {
+        return new ResponseEntity<>(userInfoService.getallusers(), HttpStatus.OK);
     }
 
     @PutMapping("/update-user/{id}")

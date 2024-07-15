@@ -3,6 +3,8 @@ package com.Ashutosh.ReportGenerator.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Setter
 @Getter
 @AllArgsConstructor
@@ -10,7 +12,9 @@ import lombok.*;
 @ToString
 @Entity
 @Table
-public class UserInfo {
+public class UserInfo implements Serializable  {
+
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "seq")
     @SequenceGenerator(name = "seq",sequenceName = "ex_seq",allocationSize = 1)
@@ -21,6 +25,6 @@ public class UserInfo {
     private String   mobile;
     private String   gender;
     private   Long      age;
-    private String Roles;
+    private String roles;
 
 }

@@ -4,8 +4,9 @@ import com.Ashutosh.ReportGenerator.Entity.Result;
 import com.Ashutosh.ReportGenerator.Service.ServiceImpl.ResultCBCServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/result")
@@ -22,8 +23,8 @@ public class ResultCBCController {
     }
 
     @GetMapping("/getresultcbcbyuserID/{id}")
-    public ResponseEntity<Result> detresultbyuserid(@PathVariable Long id){
-        Result result =resultCBCService.getResultbyUserID(id);
+    public ResponseEntity<Optional<Result>> detresultbyuserid(@PathVariable Long id){
+        Optional<Result> result =resultCBCService.getResultbyUserID(id);
         return ResponseEntity.ok(result);
 
 

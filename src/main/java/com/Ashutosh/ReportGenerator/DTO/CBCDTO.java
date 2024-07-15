@@ -12,7 +12,7 @@ import lombok.*;
 public class CBCDTO {
 
 
-    private Long cbcId;
+    private Long cbcid;
     private Long hemoglobin;
     private Long rbccount;
     private Long packedcellvolume;

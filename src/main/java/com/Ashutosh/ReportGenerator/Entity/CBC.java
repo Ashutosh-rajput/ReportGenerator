@@ -14,7 +14,7 @@ public class CBC {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "seq")
     @SequenceGenerator(name = "seq",sequenceName = "ex_seq",allocationSize = 1)
-    private Long cbcID;
+    private Long cbcid;
     private Long hemoglobin;
     private Long rbccount;
     private Long packedcellvolume;

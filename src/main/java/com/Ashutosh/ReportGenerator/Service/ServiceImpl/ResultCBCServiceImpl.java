@@ -7,15 +7,20 @@ import com.Ashutosh.ReportGenerator.ExceptionHandler.ResourceNotFoundException;
 import com.Ashutosh.ReportGenerator.Repositry.ResultRepo;
 import com.Ashutosh.ReportGenerator.Service.ServiceInterface.ResultCBCServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ResultCBCServiceImpl implements ResultCBCServiceInterface {
 
     @Autowired
     private ResultRepo resultRepo;
     @Override
+    @CachePut(value = "CBCResult",key = "#result.resultid")
     public Result createResult(CBCDTO cbcdto) {
         Long userId = cbcdto.getUserInfo().getId();
         String reportName = "CBC";
@@ -150,6 +155,7 @@ public class ResultCBCServiceImpl implements ResultCBCServiceInterface {
     }
 
     @Override
+    @CacheEvict(value="CBCResult",key = "#id")
     public Result deleteResult(Long id) {
         Result result=resultRepo.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("Result not availble to delete please add CBC Report to create Result"+ id));
@@ -158,7 +164,10 @@ public class ResultCBCServiceImpl implements ResultCBCServiceInterface {
     }
 
     @Override
-    public Result getResultbyUserID(Long id) {
-        return resultRepo.findByUserInfo_Id(id);
+    @Cacheable(value = "userCBCResult",key = "#id")
+    public Optional<Result> getResultbyUserID(Long id) {
+        String reportname="CBC";
+
+        return resultRepo.findByUserInfo_IdAndName(id,reportname);
     }
 }

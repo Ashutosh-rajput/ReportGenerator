@@ -9,7 +9,11 @@ import com.Ashutosh.ReportGenerator.Mapper.UserInfoMapper;
 import com.Ashutosh.ReportGenerator.Repositry.CBCRepo;
 import com.Ashutosh.ReportGenerator.Repositry.UserInfoRepo;
 import com.Ashutosh.ReportGenerator.Service.ServiceInterface.CBCServiceInterface;
+import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,12 +23,14 @@ public class CBCServiceImpl implements CBCServiceInterface {
     @Autowired
     private CBCRepo cbcRepo;
     @Override
+    @CachePut(value = "CBC", key = "#result.cbcid")
     public CBCDTO createCBC(CBCDTO cbcdto) {
         CBC cbc=cbcMapper.CBCDTOtoCBC(cbcdto);
         return cbcMapper.CBCtoCBCDTO(cbcRepo.save(cbc));
     }
 
     @Override
+    @Cacheable(value = "CBC",key="#id")
     public CBCDTO getCBCbyid(Long id) {
         CBC cbc=cbcRepo.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("CBC Report with id doesnt exist"+ id));
@@ -32,6 +38,7 @@ public class CBCServiceImpl implements CBCServiceInterface {
     }
 
     @Override
+    @CachePut(value = "CBC",key = "#id")
     public CBCDTO updateCBC(CBCDTO cbcdto, Long id) {
         CBC cbc=cbcRepo.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("CBC Report with id doesnt exist"+ id));
@@ -53,6 +60,7 @@ public class CBCServiceImpl implements CBCServiceInterface {
     }
 
     @Override
+    @CacheEvict(value = "CBC",key = "#id")
     public CBCDTO deleteCBC(Long id) {
         CBC cbc=cbcRepo.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("CBC Report with id doesnt exist"+ id));
@@ -61,6 +69,7 @@ public class CBCServiceImpl implements CBCServiceInterface {
     }
 
     @Override
+    @Cacheable(value="userCBC",key="#id")
     public CBCDTO getCBCByUserID(Long id) {
         CBC cbc=cbcRepo.findByUserInfo_Id(id);
         return cbcMapper.CBCtoCBCDTO(cbc);
