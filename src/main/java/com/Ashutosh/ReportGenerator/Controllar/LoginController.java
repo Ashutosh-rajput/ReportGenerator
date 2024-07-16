@@ -3,6 +3,7 @@ package com.Ashutosh.ReportGenerator.Controllar;
 
 import com.Ashutosh.ReportGenerator.DTO.LoginDTO;
 import com.Ashutosh.ReportGenerator.Security.JwtService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class LoginController {
 //    private LoginServiceImpl loginService;
 
     @PostMapping("/autologin")
-    public String login(@RequestBody LoginDTO loginDTO){
+    public String login(@RequestBody @Valid LoginDTO loginDTO){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
         if(authentication.isAuthenticated()){
             return jwtService.generateToken(loginDTO.getUsername());

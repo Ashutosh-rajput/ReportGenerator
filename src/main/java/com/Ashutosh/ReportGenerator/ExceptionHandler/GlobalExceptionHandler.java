@@ -1,12 +1,47 @@
 package com.Ashutosh.ReportGenerator.ExceptionHandler;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+import java.nio.file.AccessDeniedException;
+import java.security.SignatureException;
+import java.util.HashMap;
+import java.util.Map;
+
+@RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(Exception.class)
+    public ProblemDetail handlesSecurityException(Exception ex){
+        ProblemDetail errorDetail=null;
+        if(ex instanceof BadCredentialsException){
+            errorDetail=ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), ex.getMessage());
+            errorDetail.setProperty("access_denied_reason","Authentication Failure");
+        }
+        if(ex instanceof AccessDeniedException){
+            errorDetail=ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), ex.getMessage());
+            errorDetail.setProperty("acess_denied_reason","Not_authorized");
+        }
+        if(ex instanceof SignatureException){
+            errorDetail=ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), ex.getMessage());
+            errorDetail.setProperty("acess_denied_reason","JWT Signature is not valid.");
+        }
+        if(ex instanceof ExpiredJwtException){
+            errorDetail=ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), ex.getMessage());
+            errorDetail.setProperty("acess_denied_reason","JWT Token already expired.");
+        }
+
+        return errorDetail;
+    }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
@@ -30,6 +65,15 @@ public class GlobalExceptionHandler {
         errorResponse.setMessage(ex.getMessage());
         errorResponse.setStatus(HttpStatus.CONFLICT.value());
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String,String> handleInvalidArgument(MethodArgumentNotValidException ex){
+        Map<String,String> errorMap=new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->{
+            errorMap.put(error.getField(),error.getDefaultMessage());
+        });
+        return errorMap;
     }
 
 //    @ExceptionHandler(Exception.class)

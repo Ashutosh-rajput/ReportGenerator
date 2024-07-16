@@ -3,6 +3,7 @@ package com.Ashutosh.ReportGenerator.Controllar;
 
 import com.Ashutosh.ReportGenerator.DTO.UserInfoDTO;
 import com.Ashutosh.ReportGenerator.Service.ServiceImpl.UserInfoServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class UserInfoController {
 
     @PostMapping("/create-user")
 //    @PreAuthorize("hasAuthority('ROLE_USER')")
-    public UserInfoDTO createUser(@RequestBody UserInfoDTO userInfoDTO){
+    public UserInfoDTO createUser(@RequestBody @Valid UserInfoDTO userInfoDTO){
         return userInfoService.createUser(userInfoDTO);
     }
 
@@ -54,7 +55,7 @@ public class UserInfoController {
 
     @PutMapping("/update-user/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<UserInfoDTO> updateuser(@RequestBody UserInfoDTO userInfoDTO,@PathVariable Long id){
+    public ResponseEntity<UserInfoDTO> updateuser(@RequestBody @Valid UserInfoDTO userInfoDTO,@PathVariable Long id){
         UserInfoDTO userInfoDTO1=userInfoService.updateuser(userInfoDTO, id);
         return ResponseEntity.ok(userInfoDTO1);
     }

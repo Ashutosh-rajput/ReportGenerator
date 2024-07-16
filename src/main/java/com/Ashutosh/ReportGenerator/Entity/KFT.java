@@ -12,8 +12,8 @@ import lombok.*;
 @Table
 public class KFT {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "seq")
-    @SequenceGenerator(name = "seq",sequenceName = "ex_seq",allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "kseq")
+    @SequenceGenerator(name = "kseq",sequenceName = "kex_seq",allocationSize = 1)
     private Long kftid;
     private Long urea;
     private Long creatinine;

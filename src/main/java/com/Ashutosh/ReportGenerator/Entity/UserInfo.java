@@ -16,8 +16,8 @@ public class UserInfo implements Serializable  {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "seq")
-    @SequenceGenerator(name = "seq",sequenceName = "ex_seq",allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "useq")
+    @SequenceGenerator(name = "useq",sequenceName = "uex_seq",allocationSize = 1)
     private   Long       id;
     private String username;
     private String password;
@@ -25,6 +25,6 @@ public class UserInfo implements Serializable  {
     private String   mobile;
     private String   gender;
     private   Long      age;
-    private String roles;
+    private String    roles;
 
 }
