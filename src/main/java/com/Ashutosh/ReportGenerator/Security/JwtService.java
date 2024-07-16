@@ -69,7 +69,9 @@ public class JwtService {
 
     private String createToken(Map<String, Object> claims, String username) {
         long nowMillis = System.currentTimeMillis();
-        long expMillis = nowMillis + 1000 * 60 * 30; // 30 minutes
+//        long expMillis = nowMillis + 1000 * 60 * 30; // 30 minutes
+        long expMillis = nowMillis + 1000 * 60 * 1; // 1 minutes
+
         Date now = new Date(nowMillis);
         Date exp = new Date(expMillis);
 

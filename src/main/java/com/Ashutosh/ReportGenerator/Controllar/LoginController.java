@@ -1,8 +1,13 @@
 package com.Ashutosh.ReportGenerator.Controllar;
 
 
+import com.Ashutosh.ReportGenerator.DTO.JwtResponse;
 import com.Ashutosh.ReportGenerator.DTO.LoginDTO;
+import com.Ashutosh.ReportGenerator.DTO.RefreshTokenRequest;
+import com.Ashutosh.ReportGenerator.Entity.RefreshToken;
+import com.Ashutosh.ReportGenerator.ExceptionHandler.RefreshTokenNotFoundException;
 import com.Ashutosh.ReportGenerator.Security.JwtService;
+import com.Ashutosh.ReportGenerator.Service.ServiceImpl.RefreshTokenServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,24 +31,44 @@ public class LoginController {
     @Autowired
     public JwtService jwtService;
 
+    @Autowired
+    private RefreshTokenServiceImpl  refreshTokenService;
+
 //    @Autowired
 //    private LoginServiceImpl loginService;
 
     @PostMapping("/autologin")
-    public String login(@RequestBody @Valid LoginDTO loginDTO){
+    public JwtResponse login(@RequestBody @Valid LoginDTO loginDTO){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
         if(authentication.isAuthenticated()){
-            return jwtService.generateToken(loginDTO.getUsername());
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginDTO.getUsername());
+            return JwtResponse.builder()
+                    .accessToken(jwtService.generateToken(loginDTO.getUsername()))
+                    .token(refreshToken.getToken())
+                    .build();
         }
         else {
             throw  new UsernameNotFoundException("invalid User Request");
         }
-
-
 //        String token= loginService.login(loginDto);
 //        JwtAuthResponseDto jwtAuthResponseDto=new JwtAuthResponseDto();
 //        jwtAuthResponseDto.setAccessToken(token);
 //        return new ResponseEntity<>(jwtAuthResponseDto, HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("/refreshtoken")
+    public JwtResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest){
+        return refreshTokenService.findByToken(refreshTokenRequest.getToken())
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUserInfo)
+                .map(userInfo -> {
+                    String accessToken=jwtService.generateToken(userInfo.getUsername());
+                    return JwtResponse.builder()
+                            .accessToken(accessToken)
+                            .token(refreshTokenRequest.getToken())
+                            .build();
+                }).orElseThrow(()->new RefreshTokenNotFoundException(
+                        "Refresh token is not in database"));
 
     }
 }
