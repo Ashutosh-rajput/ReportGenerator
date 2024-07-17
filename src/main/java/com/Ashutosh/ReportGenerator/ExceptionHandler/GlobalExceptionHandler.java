@@ -20,6 +20,11 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(RefreshTokenExpiredException.class)
+    public ResponseEntity<String> handleRefreshTokenExpiredException(RefreshTokenExpiredException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(Exception.class)
     public ProblemDetail handlesSecurityException(Exception ex){
         ProblemDetail errorDetail=null;

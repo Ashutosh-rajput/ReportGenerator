@@ -2,6 +2,7 @@ package com.Ashutosh.ReportGenerator.Service.ServiceImpl;
 
 import com.Ashutosh.ReportGenerator.Entity.RefreshToken;
 import com.Ashutosh.ReportGenerator.Entity.UserInfo;
+import com.Ashutosh.ReportGenerator.ExceptionHandler.RefreshTokenExpiredException;
 import com.Ashutosh.ReportGenerator.Repositry.RefreshTokenRepo;
 import com.Ashutosh.ReportGenerator.Repositry.UserInfoRepo;
 import com.Ashutosh.ReportGenerator.Service.ServiceInterface.RefreshTokenServiceInterface;
@@ -30,12 +31,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenServiceInterface {
         if (existingTokenOpt.isPresent()) {
             refreshToken = existingTokenOpt.get();
             refreshToken.setToken(UUID.randomUUID().toString());
-            refreshToken.setExpiryDate(Instant.now().plusMillis(600000));
+            refreshToken.setExpiryDate(Instant.now().plusMillis(60000));
         } else {
             refreshToken = RefreshToken.builder()
                     .userInfo(userInfo)
                     .token(UUID.randomUUID().toString())
-                    .expiryDate(Instant.now().plusMillis(600000))
+                    .expiryDate(Instant.now().plusMillis(60000))
                     .build();
         }
 
@@ -61,7 +62,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenServiceInterface {
     public RefreshToken verifyExpiration(RefreshToken refreshToken) {
         if(refreshToken.getExpiryDate().compareTo(Instant.now())<0){
             refreshTokenRepo.delete(refreshToken);
-            throw new RuntimeException(refreshToken.getToken()+" Refresh Token was expired.");
+            throw new RefreshTokenExpiredException(refreshToken.getToken()+" Refresh Token was expired.");
 
         }
         return refreshToken;
