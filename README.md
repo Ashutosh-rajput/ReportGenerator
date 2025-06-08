@@ -25,13 +25,22 @@ The system securely processes user-submitted reports and delivers intelligent, a
 | API Format  | REST (JSON)        |
 
 ---
-
 ### 📋 Prerequisites
 
 - Java 17+
-- Maven
-- MySQL server
-- (Optional) Postman or Curl for API testing
+- Maven  
+- MySQL server  
+- (Optional) Postman or Curl for API testing  
+
+---
+
+## 📄 License  
+
+This project is licensed under the **MIT License**.  
+
+## ✍️ Author  
+
+Ashutosh Rajput – GitHub [@Ashutosh-rajput](https://github.com/Ashutosh-rajput)  
 
   
 
